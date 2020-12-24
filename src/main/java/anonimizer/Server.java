@@ -37,7 +37,7 @@ public class Server {
                                                             port -> (String)port
                                                     ).thenCompose(
                                                             port -> http.singleRequest(HttpRequest.create(
-                                                                    "https://localhost:" + url
+                                                                    "https://localhost:" + url + "?url="
                                                             ))
                                                     )
                                 }
