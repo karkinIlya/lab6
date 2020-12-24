@@ -26,6 +26,8 @@ public class Server {
         ActorRef confActor = system.actorOf(Props.create(ConfActor.class));
         int PORT = Integer.parseInt(argv[0]);
 
+        // init zookeeper
+
 //        final Flow<HttpRequest, HttpResponse, NotUsed> route = createRoute().flow();
         final CompletionStage<> binding = http.bindAndHandle(
                 flow,
