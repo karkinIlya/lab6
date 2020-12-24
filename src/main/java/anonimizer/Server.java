@@ -25,6 +25,7 @@ public class Server {
     public static final String URL_PARAM = "url";
     public static final String COUNT_PARAM = "count";
     public static final Duration TIMEOUT = Duration.ofSeconds(5);
+    public static final String FORTAM_STRING = "https://localhost:%s?url=%s&count=%s";
 
     public static Route createRoute(Http http, ActorRef confActor) {
         return Route(get(() ->
@@ -37,7 +38,7 @@ public class Server {
                                                             port -> (String)port
                                                     ).thenCompose(
                                                             port -> http.singleRequest(HttpRequest.create(
-                                                                    "https://localhost:" + port + "?url=" + url + "&count=" + count;
+                                                                    String.format(FORTAM_STRING, port, url, count);
                                                             ))
                                                     )
                                 }
