@@ -19,7 +19,7 @@ public class Server {
 
     public static Route createRoute() {
         return Route(get(() ->
-                Parametr("url", url ->
+                        parameter("url", url ->
 
                         )
 
