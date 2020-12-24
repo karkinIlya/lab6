@@ -34,7 +34,9 @@ public class Server {
                                             completeWithFuture(http.singleRequest(HttpRequest.create(url))) :
                                             completeWithFuture(Patterns.ask(confActor, new ServerSelector(), TIMEOUT)
                                                     .thenApply(
-                                                            port -> (String)port;
+                                                            port -> (String)port
+                                                    ).thenCompose(
+                                                            po
                                                     )
                                 }
                         )
