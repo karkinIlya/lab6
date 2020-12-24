@@ -13,6 +13,8 @@ import akka.stream.javadsl.Flow;
 import akka.http.javadsl.model.HttpRequest;
 import akka.http.javadsl.model.HttpResponse;
 
+import java.time.Duration;
+
 import static akka.http.javadsl.server.Directives.completeWithFuture;
 import static akka.http.javadsl.server.Directives.parameter;
 import static jdk.internal.jline.TerminalFactory.get;
@@ -21,6 +23,7 @@ public class Server {
 
     public static final String URL_PARAM = "url";
     public static final String COUNT_PARAM = "count";
+    public static final Duration TIMEOUT = Duration.ofSeconds(5);
 
     public static Route createRoute(Http http, ActorRef confActor) {
         return Route(get(() ->
@@ -28,7 +31,7 @@ public class Server {
                                 parameter(COUNT_PARAM, count -> {
                                     return Integer.parseInt(count) <= 0 ?
                                             completeWithFuture(http.singleRequest(HttpRequest.create(url))) :
-                                            completeWithFuture(Patterns.ask(confActor, new ServerSelector(), ))
+                                            completeWithFuture(Patterns.ask(confActor, new ServerSelector(), TIMEOUT))
                                 }
                         )
 
