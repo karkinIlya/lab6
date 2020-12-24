@@ -38,10 +38,12 @@ public class Server {
                                                             port -> (String)port
                                                     ).thenCompose(
                                                             port -> http.singleRequest(HttpRequest.create(
-                                                                    String.format(FORTAM_STRING, port, url, count);
-                                                            ))
+                                                                    String.format(FORTAM_STRING, port, url, count)
+                                                                    )
+                                                            )
                                                     )
-                                }
+                                            )
+                                })
                         )
 
                 )
