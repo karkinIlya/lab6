@@ -36,7 +36,9 @@ public class Server {
                                                     .thenApply(
                                                             port -> (String)port
                                                     ).thenCompose(
-                                                            port -> http.singleRequest(HttpRequest.create(url))
+                                                            port -> http.singleRequest(HttpRequest.create(
+                                                                    
+                                                            ))
                                                     )
                                 }
                         )
