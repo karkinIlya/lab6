@@ -7,18 +7,25 @@ import akka.actor.Props;
 import akka.http.impl.engine.client.PoolConductor;
 import akka.http.javadsl.Http;
 import akka.http.javadsl.ServerBinding;
+import akka.http.javadsl.server.Route;
 import akka.stream.javadsl.Flow;
 
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import static jdk.internal.jline.TerminalFactory.get;
+
 public class Server {
 
-//    public static PoolConductor.Route createRoute() {
-//        return route(
-//
-//        )
-//    }
+    public static Route createRoute() {
+        return Route(get(() ->
+                Parametr("url", url ->
+
+                        )
+
+                )
+        )
+    }
 
     public static void main(String[] argv) {
         ActorSystem system = ActorSystem.create("routes");
