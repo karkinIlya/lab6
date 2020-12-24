@@ -28,7 +28,7 @@ public class Server {
                                 parameter(COUNT_PARAM, count -> {
                                     return Integer.parseInt(count) <= 0 ?
                                             completeWithFuture(http.singleRequest(HttpRequest.create(url))) :
-                                            completeWithFuture(Patterns.ask(confActor, ))
+                                            completeWithFuture(Patterns.ask(confActor, new ServerSelector()))
                                 }
                         )
 
