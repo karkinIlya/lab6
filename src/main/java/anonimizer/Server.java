@@ -12,6 +12,7 @@ import akka.stream.javadsl.Flow;
 
 import akka.http.javadsl.model.HttpRequest;
 import akka.http.javadsl.model.HttpResponse;
+import jdk.internal.joptsimple.internal.Strings;
 
 import java.time.Duration;
 
@@ -33,7 +34,7 @@ public class Server {
                                             completeWithFuture(http.singleRequest(HttpRequest.create(url))) :
                                             completeWithFuture(Patterns.ask(confActor, new ServerSelector(), TIMEOUT)
                                                     .thenApply(
-                                                            port ->
+                                                            port -> (String)port;
                                                     )
                                 }
                         )
