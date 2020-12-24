@@ -36,7 +36,7 @@ public class Server {
                                                     .thenApply(
                                                             port -> (String)port
                                                     ).thenCompose(
-                                                            po
+                                                            port ->
                                                     )
                                 }
                         )
