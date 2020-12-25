@@ -19,6 +19,7 @@ import static akka.http.javadsl.server.Directives.*;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.concurrent.CompletionStage;
 
 public class Server {
@@ -65,10 +66,11 @@ public class Server {
 
         // init zookeeper
         Watcher watcher =  watchedEvent -> {
-            if (watchedEvent.getType() == Watcher.Event.EventType.NodeCreated ||
-                    watchedEvent.getType() == Watcher.Event.EventType.NodeDeleted ||
-                    watchedEvent.getType() == Watcher.Event.EventType.NodeDataChanged) {
-            }
+            if(watchedEvent.getType() == Watcher.Event.EventType.NodeCreated ||
+                    watchedEvent.getType() == Watcher.Event.EventType.NodeDataChanged ||
+                    watchedEvent.getType() == Watcher.Event.EventType.NodeDeleted) {
+                ArrayList<String> serversAdded = new ArrayList<>();
+                for()
             }
         };
         ZooKeeper zookeeper = new ZooKeeper(HOST_NAME + ":" + ZOOKEEPER_PORT, (int)MS_TIMEOUT, watcher);
