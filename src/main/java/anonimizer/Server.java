@@ -10,6 +10,7 @@ import akka.http.javadsl.model.HttpRequest;
 import akka.http.javadsl.model.HttpResponse;
 import akka.http.javadsl.server.Route;
 import akka.pattern.Patterns;
+import akka.stream.ActorMaterializer;
 import akka.stream.javadsl.Flow;
 import static akka.http.javadsl.server.Directives.*;
 import java.time.Duration;
@@ -53,10 +54,11 @@ public class Server {
 
         // init zookeeper
 
-        final Flow<HttpRequest, HttpResponse, NotUsed> route = createRoute(http, confActor).flow(system);
+        ActorMaterializer materializer = ActorMaterializer.create(system);
+        final Flow<HttpRequest, HttpResponse, NotUsed> route = createRoute(http, confActor).flow(system, materializer);
         final CompletionStage<> binding = http.bindAndHandle(
                 flow,
-                connection,
+                ConnectHttp
                 materializer
                 );
         binding.thenCompose(ServerBinding::unbind)
