@@ -4,6 +4,7 @@ import akka.NotUsed;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import akka.http.javadsl.ConnectHttp;
 import akka.http.javadsl.Http;
 import akka.http.javadsl.ServerBinding;
 import akka.http.javadsl.model.HttpRequest;
@@ -20,7 +21,8 @@ public class Server {
     public static final String URL_PARAM = "url";
     public static final String COUNT_PARAM = "count";
     public static final Duration TIMEOUT = Duration.ofSeconds(5);
-    public static final String FORMAT_STRING = "https://localhost:%s?url=%s&count=%s";
+    public static final String FORMAT_STRING = "https://%s:%s?url=%s&count=%s";
+    public static final String HOST_NAME = "localhost";
 
     public static Route createRoute(Http http, ActorRef confActor) {
         return route(get(() ->
@@ -34,7 +36,8 @@ public class Server {
                                                                 port -> (String)port
                                                         ).thenCompose(
                                                                 port -> http.singleRequest(HttpRequest.create(
-                                                                        String.format(FORMAT_STRING, port, url, count)
+                                                                        String.format(FORMAT_STRING, HOST_NAME,
+                                                                                port, url, count)
                                                                         )
                                                                 )
                                                         )
@@ -58,7 +61,7 @@ public class Server {
         final Flow<HttpRequest, HttpResponse, NotUsed> route = createRoute(http, confActor).flow(system, materializer);
         final CompletionStage<> binding = http.bindAndHandle(
                 flow,
-                ConnectHttp
+                ConnectHttp.toHost(HOST_NAME, PORT)
                 materializer
                 );
         binding.thenCompose(ServerBinding::unbind)
