@@ -30,23 +30,21 @@ public class Server {
     public static Route createRoute(Http http, ActorRef confActor) {
         return Route(get(() ->
                         parameter(URL_PARAM, url ->
-                                parameter(COUNT_PARAM, count -> {
-                                    if (Integer.parseInt(count) <= 0){
-                                        return completeWithFuture(http.singleRequest(HttpRequest.create(url)));
-                                    }
-                                    else {
-                                        return completeWithFuture(Patterns.ask(confActor, new ServerSelector(), TIMEOUT)
-                                                .thenApply(
-                                                        port -> (String)port
-                                                ).thenCompose(
-                                                        port -> http.singleRequest(HttpRequest.create(
-                                                                String.format(FORTAM_STRING, port, url, count)
+                                parameter(COUNT_PARAM, count ->
+                                        Integer.parseInt(count) <= 0 ?
+                                                (completeWithFuture(http.singleRequest(HttpRequest.create(url)))) :
+                                                (completeWithFuture(Patterns.ask(confActor, new ServerSelector(),
+                                                        TIMEOUT)
+                                                        .thenApply(
+                                                                port -> (String)port
+                                                        ).thenCompose(
+                                                                port -> http.singleRequest(HttpRequest.create(
+                                                                        String.format(FORTAM_STRING, port, url, count)
+                                                                        )
                                                                 )
                                                         )
-                                                )
-                                        );
-                                    }
-                                })
+                                                ))
+                                )
                         )
 
                 )
