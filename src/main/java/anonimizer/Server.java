@@ -49,7 +49,7 @@ public class Server {
                                                                         String.format(FORMAT_STRING, HOST_NAME,
                                                                                 port, url, Integer.toString(
                                                                                         Integer.parseInt(count) - 1)
-                                                                        )
+                                                                        ))
                                                                 )
                                                         )
                                                 ))
