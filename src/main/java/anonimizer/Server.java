@@ -1,23 +1,6 @@
 package anonimizer;
 
-import akka.NotUsed;
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
-import akka.http.javadsl.Http;
-import akka.http.javadsl.ServerBinding;
-import akka.http.javadsl.server.Route;
-import akka.pattern.Patterns;
-import akka.stream.javadsl.Flow;
 
-import akka.http.javadsl.model.HttpRequest;
-import akka.http.javadsl.model.HttpResponse;
-
-import java.time.Duration;
-
-import static akka.http.javadsl.server.Directives.completeWithFuture;
-import static akka.http.javadsl.server.Directives.parameter;
-import static jdk.internal.jline.TerminalFactory.get;
 
 public class Server {
 
