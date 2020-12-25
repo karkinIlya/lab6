@@ -13,6 +13,7 @@ import akka.http.javadsl.server.Route;
 import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
 import akka.stream.javadsl.Flow;
+import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 
 import static akka.http.javadsl.server.Directives.*;
@@ -66,7 +67,7 @@ public class Server {
 
                 }
         );
-        zookeeper.create("/servers/" + PORT , Integer.toString(PORT).getBytes(), )
+        zookeeper.create("/servers/" + PORT , Integer.toString(PORT).getBytes(), ZooDefs.)
 
         ActorMaterializer materializer = ActorMaterializer.create(system);
         final Flow<HttpRequest, HttpResponse, NotUsed> flow = createRoute(http, confActor).flow(system, materializer);
