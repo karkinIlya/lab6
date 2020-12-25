@@ -13,10 +13,11 @@ import akka.http.javadsl.server.Route;
 import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
 import akka.stream.javadsl.Flow;
-import org.apache.zookeeper.ZooDefs;
-import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.*;
 
 import static akka.http.javadsl.server.Directives.*;
+
+import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.CompletionStage;
 
@@ -29,6 +30,7 @@ public class Server {
     public static final String FORMAT_STRING = "https://%s:%s?url=%s&count=%s";
     public static final String HOST_NAME = "localhost";
     public static final String ZOOKEEPER_PORT = "2181";
+    public static final String ZOOKEEPER_ROOT_PATH = "/servers/";
 
     public static Route createRoute(Http http, ActorRef confActor) {
         return route(get(() ->
@@ -55,25 +57,29 @@ public class Server {
         );
     }
 
-    public static void main(String[] argv) {
+    public static void main(String[] argv) throws KeeperException, InterruptedException, IOException {
         ActorSystem system = ActorSystem.create("routes");
         Http http = Http.get(system);
         ActorRef confActor = system.actorOf(Props.create(ConfActor.class));
         int PORT = Integer.parseInt(argv[0]);
 
         // init zookeeper
-        ZooKeeper zookeeper = new ZooKeeper(HOST_NAME + ":" + ZOOKEEPER_PORT, MS_TIMEOUT,
-                watchedEvent -> {
+        Watcher watcher =  watchedEvent -> {
+            
+        };
+        ZooKeeper zookeeper = new ZooKeeper(HOST_NAME + ":" + ZOOKEEPER_PORT, (int)MS_TIMEOUT, watcher);
+        zookeeper.create(ZOOKEEPER_ROOT_PATH + PORT , Integer.toString(PORT).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE,
+                CreateMode.EPHEMERAL_SEQUENTIAL);
+        WatchedEvent watchedEvent = new WatchedEvent(Watcher.Event.EventType.NodeCreated,
+                Watcher.Event.KeeperState.SyncConnected, "");
+        watcher.process(watchedEvent);
 
-                }
-        );
-        zookeeper.create("/servers/" + PORT , Integer.toString(PORT).getBytes(), ZooDefs.)
 
         ActorMaterializer materializer = ActorMaterializer.create(system);
         final Flow<HttpRequest, HttpResponse, NotUsed> flow = createRoute(http, confActor).flow(system, materializer);
         final CompletionStage<ServerBinding> binding = http.bindAndHandle(
                 flow,
-                ConnectHttp.toHost(HOST_NAME, PORT)
+                ConnectHttp.toHost(HOST_NAME, PORT),
                 materializer
                 );
         binding.thenCompose(ServerBinding::unbind)
