@@ -66,7 +66,7 @@ public class Server {
 
                 }
         );
-        zookeeper.create("/servers/" + PORT , )
+        zookeeper.create("/servers/" + PORT , Integer.toString(PORT).getBytes(), )
 
         ActorMaterializer materializer = ActorMaterializer.create(system);
         final Flow<HttpRequest, HttpResponse, NotUsed> flow = createRoute(http, confActor).flow(system, materializer);
