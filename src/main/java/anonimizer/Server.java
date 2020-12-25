@@ -58,7 +58,7 @@ public class Server {
         // init zookeeper
 
         ActorMaterializer materializer = ActorMaterializer.create(system);
-        final Flow<HttpRequest, HttpResponse, NotUsed> route = createRoute(http, confActor).flow(system, materializer);
+        final Flow<HttpRequest, HttpResponse, NotUsed> flow = createRoute(http, confActor).flow(system, materializer);
         final CompletionStage<> binding = http.bindAndHandle(
                 flow,
                 ConnectHttp.toHost(HOST_NAME, PORT)
