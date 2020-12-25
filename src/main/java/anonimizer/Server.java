@@ -24,6 +24,7 @@ public class Server {
     public static final String URL_PARAM = "url";
     public static final String COUNT_PARAM = "count";
     public static final Duration TIMEOUT = Duration.ofSeconds(5);
+    public static final long MS_TIMEOUT = TIMEOUT.getSeconds() * 1000;
     public static final String FORMAT_STRING = "https://%s:%s?url=%s&count=%s";
     public static final String HOST_NAME = "localhost";
     public static final String ZOOKEEPER_PORT = "2181";
@@ -60,7 +61,12 @@ public class Server {
         int PORT = Integer.parseInt(argv[0]);
 
         // init zookeeper
-        ZooKeeper zookeeper = new ZooKeeper(HOST_NAME + ":" + ZOOKEEPER_PORT, );
+        ZooKeeper zookeeper = new ZooKeeper(HOST_NAME + ":" + ZOOKEEPER_PORT, MS_TIMEOUT,
+                watchedEvent -> {
+
+                }
+        );
+        zookeeper.create("/servers/" + PORT , )
 
         ActorMaterializer materializer = ActorMaterializer.create(system);
         final Flow<HttpRequest, HttpResponse, NotUsed> flow = createRoute(http, confActor).flow(system, materializer);
