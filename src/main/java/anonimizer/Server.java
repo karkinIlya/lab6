@@ -65,7 +65,11 @@ public class Server {
 
         // init zookeeper
         Watcher watcher =  watchedEvent -> {
-            
+            if (watchedEvent.getType() == Watcher.Event.EventType.NodeCreated ||
+                    watchedEvent.getType() == Watcher.Event.EventType.NodeDeleted ||
+                    watchedEvent.getType() == Watcher.Event.EventType.NodeDataChanged) {
+            }
+            }
         };
         ZooKeeper zookeeper = new ZooKeeper(HOST_NAME + ":" + ZOOKEEPER_PORT, (int)MS_TIMEOUT, watcher);
         zookeeper.create(ZOOKEEPER_ROOT_PATH + PORT , Integer.toString(PORT).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE,
