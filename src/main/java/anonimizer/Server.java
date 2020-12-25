@@ -31,7 +31,7 @@ public class Server {
     public static final String FORMAT_STRING = "https://%s:%s?url=%s&count=%s";
     public static final String HOST_NAME = "localhost";
     public static final String ZOOKEEPER_PORT = "2181";
-    public static final String ZOOKEEPER_ROOT_PATH = "/servers/";
+    public static final String ZOOKEEPER_ROOT_PATH = "/servers";
 
     public static Route createRoute(Http http, ActorRef confActor) {
         return route(get(() ->
@@ -65,17 +65,25 @@ public class Server {
         int PORT = Integer.parseInt(argv[0]);
 
         // init zookeeper
+        ZooKeeper zooKeeper;
         Watcher watcher =  watchedEvent -> {
             if(watchedEvent.getType() == Watcher.Event.EventType.NodeCreated ||
                     watchedEvent.getType() == Watcher.Event.EventType.NodeDataChanged ||
                     watchedEvent.getType() == Watcher.Event.EventType.NodeDeleted) {
                 ArrayList<String> serversAdded = new ArrayList<>();
-                for()
+                try {
+                    for (String str : zooKeeper.getChildren(ZOOKEEPER_ROOT_PATH, null)) {
+                        byte[] port = zooKeeper.getData(ZOOKEEPER_ROOT_PATH + "/" + str, false, null);
+                        serversAdded.add(new String(port));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         };
-        ZooKeeper zookeeper = new ZooKeeper(HOST_NAME + ":" + ZOOKEEPER_PORT, (int)MS_TIMEOUT, watcher);
-        zookeeper.create(ZOOKEEPER_ROOT_PATH + PORT , Integer.toString(PORT).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE,
-                CreateMode.EPHEMERAL_SEQUENTIAL);
+        zooKeeper = new ZooKeeper(HOST_NAME + ":" + ZOOKEEPER_PORT, (int)MS_TIMEOUT, watcher);
+        zooKeeper.create(ZOOKEEPER_ROOT_PATH + "/" + PORT , Integer.toString(PORT).getBytes(),
+                ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
         WatchedEvent watchedEvent = new WatchedEvent(Watcher.Event.EventType.NodeCreated,
                 Watcher.Event.KeeperState.SyncConnected, "");
         watcher.process(watchedEvent);
