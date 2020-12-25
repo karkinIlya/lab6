@@ -13,8 +13,11 @@ import akka.http.javadsl.server.Route;
 import akka.pattern.Patterns;
 import akka.stream.ActorMaterializer;
 import akka.stream.javadsl.Flow;
+import org.apache.zookeeper.ZooKeeper;
+
 import static akka.http.javadsl.server.Directives.*;
 import java.time.Duration;
+import java.util.concurrent.CompletionStage;
 
 public class Server {
 
@@ -23,6 +26,7 @@ public class Server {
     public static final Duration TIMEOUT = Duration.ofSeconds(5);
     public static final String FORMAT_STRING = "https://%s:%s?url=%s&count=%s";
     public static final String HOST_NAME = "localhost";
+    public static final String ZOOKEEPER_PORT = "2181";
 
     public static Route createRoute(Http http, ActorRef confActor) {
         return route(get(() ->
@@ -56,10 +60,11 @@ public class Server {
         int PORT = Integer.parseInt(argv[0]);
 
         // init zookeeper
+        ZooKeeper zookeeper = new ZooKeeper(HOST_NAME + ":" + ZOOKEEPER_PORT, );
 
         ActorMaterializer materializer = ActorMaterializer.create(system);
         final Flow<HttpRequest, HttpResponse, NotUsed> flow = createRoute(http, confActor).flow(system, materializer);
-        final CompletionStage<> binding = http.bindAndHandle(
+        final CompletionStage<ServerBinding> binding = http.bindAndHandle(
                 flow,
                 ConnectHttp.toHost(HOST_NAME, PORT)
                 materializer
