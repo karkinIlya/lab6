@@ -1,16 +1,28 @@
 package anonimizer;
 
-
+import akka.NotUsed;
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.http.javadsl.Http;
+import akka.http.javadsl.ServerBinding;
+import akka.http.javadsl.model.HttpRequest;
+import akka.http.javadsl.model.HttpResponse;
+import akka.http.javadsl.server.Route;
+import akka.pattern.Patterns;
+import akka.stream.javadsl.Flow;
+import static akka.http.javadsl.server.Directives.*;
+import java.time.Duration;
 
 public class Server {
 
     public static final String URL_PARAM = "url";
     public static final String COUNT_PARAM = "count";
     public static final Duration TIMEOUT = Duration.ofSeconds(5);
-    public static final String FORTAM_STRING = "https://localhost:%s?url=%s&count=%s";
+    public static final String FORMAT_STRING = "https://localhost:%s?url=%s&count=%s";
 
     public static Route createRoute(Http http, ActorRef confActor) {
-        return Route(get(() ->
+        return route(get(() ->
                         parameter(URL_PARAM, url ->
                                 parameter(COUNT_PARAM, count ->
                                         Integer.parseInt(count) <= 0 ?
@@ -21,7 +33,7 @@ public class Server {
                                                                 port -> (String)port
                                                         ).thenCompose(
                                                                 port -> http.singleRequest(HttpRequest.create(
-                                                                        String.format(FORTAM_STRING, port, url, count)
+                                                                        String.format(FORMAT_STRING, port, url, count)
                                                                         )
                                                                 )
                                                         )
@@ -41,7 +53,7 @@ public class Server {
 
         // init zookeeper
 
-        final Flow<HttpRequest, HttpResponse, NotUsed> route = createRoute(http, confActor).flow();
+        final Flow<HttpRequest, HttpResponse, NotUsed> route = createRoute(http, confActor).flow(system);
         final CompletionStage<> binding = http.bindAndHandle(
                 flow,
                 connection,
