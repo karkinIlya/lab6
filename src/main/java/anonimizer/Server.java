@@ -47,7 +47,8 @@ public class Server {
                                                         ).thenCompose(
                                                                 port -> http.singleRequest(HttpRequest.create(
                                                                         String.format(FORMAT_STRING, HOST_NAME,
-                                                                                port, url, count)
+                                                                                port, url, Integer.toString(
+                                                                                        Integer.parseInt(count) - 1)
                                                                         )
                                                                 )
                                                         )
