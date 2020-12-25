@@ -32,6 +32,7 @@ public class Server {
     public static final String HOST_NAME = "localhost";
     public static final String ZOOKEEPER_PORT = "2181";
     public static final String ZOOKEEPER_ROOT_PATH = "/servers";
+    public static ZooKeeper zooKeeper;
 
     public static Route createRoute(Http http, ActorRef confActor) {
         return route(get(() ->
@@ -65,7 +66,6 @@ public class Server {
         int PORT = Integer.parseInt(argv[0]);
 
         // init zookeeper
-        ZooKeeper zooKeeper;
         Watcher watcher =  watchedEvent -> {
             if(watchedEvent.getType() == Watcher.Event.EventType.NodeCreated ||
                     watchedEvent.getType() == Watcher.Event.EventType.NodeDataChanged ||
