@@ -1,12 +1,15 @@
 package anonimizer;
 
 import akka.actor.AbstractActor;
+import akka.actor.ActorRef;
 import akka.japi.pf.ReceiveBuilder;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class ConfActor extends AbstractActor {
     private ArrayList<String> servers;
+    private Random r = new Random(123);
 
     @Override
     public Receive createReceive() {
@@ -18,7 +21,10 @@ public class ConfActor extends AbstractActor {
                 )
                 .match(
                         ServerSelector.class, message -> {
-                            getSender().tell();
+                            getSender().tell(
+                                    servers.get(r.nextInt(servers.size())),
+                                    ActorRef.noSender()
+                            );
                         }
                 ).build();
     }
